@@ -12,6 +12,10 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(vembedr)
+library(tidyverse)
+library(here)
+library(janitor)
+
 ```
 
 

@@ -53,7 +53,6 @@ sdr_data <- sdr_data %>%
   clean_names()
 ```
 
-
 ### Customize a Histogram
 
 Let's start with the histogram you created last lesson with ggplot() and geom_histogram()
@@ -131,7 +130,16 @@ Here is the code for a scatter plot you made in the last lesson:
 
 ```{r, warning = FALSE}
 ggplot(data = sdr_data, aes(x= goal_3_score, y = goal_4_score, color = regions_used_for_the_sdr)) +
-  geom_point()
+  geom_point()  
+  geom_histogram() +
+  theme_minimal() +
+  scale_fill_viridis_d()
+   labs(title = "Distributions of SDG 4 Scores",
+       x = "SDG 4 Score",
+       y = "Number of Countries",
+       fill = "Region")
+
+ggplotly(goal_4_histogram)
 ```
 
 *Edit the code chunk above* that generates the plot to:
@@ -145,6 +153,18 @@ ggplot(data = sdr_data, aes(x= goal_3_score, y = goal_4_score, color = regions_u
 - make it interactive with ggplotly()
 
   - hint: you will have to assign a name to the plot
+```{r}
+goal_3_4_scatter_plot <- 
+ggplot(data = sdr_data, aes(x= goal_3_score, y = goal_4_score, color = regions_used_for_the_sdr, label = country)) +
+  geom_point()+
+  theme_minimal()+
+  scale_color_viridis_d(option = "plasma") +
+  labs(x = "Goal 3 Score",
+       y = "Goal 4 Score",
+       color = "Region")
+
+ggplotly(goal_3_4_scatter_plot)
+```
 
 
 

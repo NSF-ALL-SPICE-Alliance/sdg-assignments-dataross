@@ -131,6 +131,18 @@ Cool! It seems that the darkest blue points (countries with the lowest SDG 5 sco
 #### <span style="color: red;">Challenge 1</span>
 Create a scatterplot using two different SDG scores. Then, color the points by using a third SDG score. In a couple of sentences, describe what you see.
 
+
+```{r}
+ggplot(data = sdr_data, aes(x = goal_7_score,y = goal_13_score, color = goal_12_score)) +
+  geom_point()
+```
+There are a few things I have concluded from this graph.  First of all, there are a lot of countries with high goal 13 and goal 12 scores that tend to have lower goal 7 scores. Moreover, darker countries tend to have higher goal 7 scores.
+
+
+
+
+
+
 ### Bar Chart
 
 When should we use a **bar chart**?
@@ -152,14 +164,14 @@ Hmm... it looks like the country names are hard to read - there are too many of 
     - We'll create a new dataframe from our original dataframe, sdr_data, called lac_sdr_data that only includes countries in Latin America and the Carribean
 
 ```{r}
-lac_sdr_data <- sdr_data %>% 
-  filter(regions_used_for_the_sdr == "LAC") # filtering for LAC countries only
+MENA_sdr_data <- sdr_data %>% 
+  filter(regions_used_for_the_sdr == "MENA") # filtering for LAC countries only
 ```
 
 Now let's make a bar chart from our new dataframe `lac_sdr_data`
 
 ```{r}
-ggplot(lac_sdr_data, aes(x= goal_3_score, y = country)) +
+ggplot(MENA_sdr_data, aes(x= goal_3_score, y = country)) +
   geom_bar(stat = "identity") 
 ```
 
