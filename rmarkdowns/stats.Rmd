@@ -29,6 +29,7 @@ library(ggpubr)
 library(janitor)
 library(ggcorrplot)
 library(vembedr)
+library(plotly)
 ```
 
 
@@ -197,13 +198,15 @@ To circle back and reinforce how the linear regression (line drawn through our s
   - What does this look like on scatter plot?
   
 ```{r, warning=FALSE, message=FALSE}
+sdg_scores_2023 <-
 ggplot(sdr_data, aes(x = goal_12_score, 
-                     y = goal_9_score)) +
+                     y = goal_9_score, label = country)) +
   geom_point() +
   geom_smooth() +
-  stat_cor() +
+  stat_cor(output.type = "text" , label.sep = '\n') +
   theme_minimal() 
 
+ggplotly(sdg_scores_2023)
 ```
 
 ### <span style="color: red;">Challenge 1</span>
@@ -216,7 +219,8 @@ ggplot(sdr_data, aes(x = goal_12_score,
      - **Hint** to use the ggplotly() function, you will need to use `library()` to load in the plotly package in the first code chunk in this R Markdown
 
   - in 4-6 sentences, come up with a hypotheses for the positive or negative correlation between the 2 goals
-      
+  
+  There are many conclusions one can draw from comparing sdg scores 9 and 12. First of all, the strongest correlation between the two scores is a positive correlation with countries having a high goal 12 score and low goal 9 score.  Secondly, there is another positive correlation when countries have a low goal 12 score and a high goal 9 score.  Lastly, there are a decent amount of outlier countries. These countries are in multiple regions ranging from Europe to the Pacific regions. 
       - are there any points that don't follow the trend (outliers)
         
         - which country(s) are outliers?
