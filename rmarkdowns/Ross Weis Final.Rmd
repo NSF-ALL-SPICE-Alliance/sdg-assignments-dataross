@@ -1,0 +1,154 @@
+---
+title: "Ross Weis Final"
+author: "Ross Weis"
+date: "2024-05-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(plotly)
+library(janitor)
+library(vembedr)
+library(rnaturalearth)
+library(leaflet)
+library(sf)
+library(vembedr)
+
+```
+
+read in data
+
+
+```{r}
+SDR_2023_Data <- read.csv(here("data/sdr-2023-Data.csv"))
+```
+
+```{r}
+sdr_data_sids <- read.csv(here("data/SDR-for-SIDS/SIDS-SDR-2023-data.csv"))
+```
+
+clean data
+
+
+
+```{r}
+SDR_2023_Data <- SDR_2023_Data %>% 
+  clean_names()
+  
+
+```
+
+create a dataframe from rnaturalearth
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+```
+
+```{r}
+world <- world %>% 
+  select(name_long, iso_a3, geometry)
+```
+
+```{r}
+# Rename a column in a data frame or matrix
+colnames(SDR_2023_Data)[which(colnames(SDR_2023_Data) == "country_code_iso3")] <- "iso_a3"
+```
+
+```{r}
+sdr_data_world_joined <- left_join(SDR_2023_Data, world, by = "iso_a3")
+
+class(sdr_data_world_joined)
+
+sdr_data_world_joined <- st_as_sf(sdr_data_world_joined)
+
+class(sdr_data_world_joined)
+
+```
+specify coordinates
+
+```{r}
+sdr_data_world_joined <- st_transform(sdr_data_world_joined, "+proj=longlat +datum=WGS84")
+```
+
+
+```{r}
+mytext <- paste(
+    "Country: ", sdr_data_world_joined$country,"<br/>", 
+    "Goal 4 Score: ", round(sdr_data_world_joined$goal_4_score, 2), 
+    sep="") %>%
+  lapply(htmltools::HTML)
+
+leaflet(sdr_data_world_joined) %>% 
+  addTiles()  %>% 
+  setView( lat=10, lng=0 , zoom=2) %>%
+  addPolygons(stroke = FALSE, fillOpacity = 0.5, smoothFactor = 0.5, color = ~colorQuantile("YlOrRd", goal_4_score)(goal_4_score), label = mytext)
+```
+This is a map representing the SDG 4 score of the Bahamas as well as the surrounding countries in the same vicinity. The SDG 4 score represents the quality of education in a particular country as the learning opportunities available to its citizens.  The Bahamas has a very low SDG 4 score of 58.  Moreover, in this region, the Bahamas has the lowest SDG 4 score. Comparatively, the countries around the Bahamas have a much higher SDG 4 score.  These include countries like Cuba and Jamaica, which have SDG 4 scores of 92 and 81, respectively. Education serves as the cornerstone of a nation's progress and prosperity. Moreover, it plays a pivotal role in shaping a countries future. I chose this map as my first illustration because it shows concentrations of both high and low scores throughout the world. Furthermore, I think it does a great job of highlighting how the Bahamas compares to its neighbors and its region as whole.
+
+
+
+```{r}
+
+##In this visualization, I created a bar to show the distribution of goal 4 scores across all 8 regions.
+
+
+goal_4_histogram <- ggplot(SDR_2023_Data, aes(x = goal_4_score, fill=regions_used_for_the_sdr)) +
+  geom_histogram() +
+  theme_minimal() +
+  scale_fill_viridis_d() +
+  labs(title = "Quality of Education Scores",
+       x = "Quality of Education",
+       y = "# of Countries",
+       fill = "Region")
+
+ggplotly(goal_4_histogram)
+```
+In this visualization, I created a bar to show the distribution of goal 4 scores across all 8 regions. I think that this histogram is a great way to illustrate the distribution of education quality all over the world as it relates to what regions are doing well and which regions aren't.  The ggplotly function helps to parse out what regions are in the lower percentiles as well as which regions are in the higher percentiles.  For example, while my primary focus is on the LAC region, the Sub-Saharan Africa region is the region most affected by the quality of education SDG score.  Moreover, it is solely in the bottom percentiles on the graph, proving it to be an outlier region. I found it to be interesting that certain regions, like Sub-Saharan Africa, have concentrated scores across the chart but the LAC region appears to be scattered from the 50 percentile to the 100 percentile. From this, I discovered that the Bahamas is the only country in this region that hovers in the 50-60 percentile. It is an outlier within its region as it relates to this SDG score.
+
+
+
+```{r}
+## Histogram of goal 8
+
+goal_8_histogram <- ggplot(SDR_2023_Data, aes(x = goal_8_score, fill=regions_used_for_the_sdr)) +
+  geom_histogram() +
+  theme_minimal() +
+  scale_fill_viridis_d() +
+  labs(title = "Distributions of SDG 8 Scores",
+       x = "SDG 8 Score",
+       y = "Number of Countries",
+       fill = "Region")
+
+ggplotly(goal_8_histogram)
+```
+
+This illustration shows how all regions compare as it relates to their SDG 8, or decent work and economic growth, and again the Bahamas lands near the center. The graph on decent work and economic growth in the Bahamas compared to its regional counterparts reveals a significant lag in several key indicators. Firstly, it indicates that the Bahamas has a lower employment rate compared to neighboring countries, implying potential challenges in job creation or labor market participation. Secondly, the graph likely depicts lower wages or income levels in the Bahamas relative to other nations in the region, indicating potential issues with income inequality or purchasing power parity. Additionally, it may illustrate a disparity in access to economic opportunities, such as entrepreneurship or career advancement, which could hinder the country's overall economic growth. Furthermore, the graph might highlight shortcomings in areas like labor productivity or innovation. The graph underscores the importance of these shortcomings by proving that the Bahamas, when compared to other regions and specifically its own, isnt doing very well. Decent work is a hallmark to a countries economic success.
+
+
+
+
+```{r}
+##Here is a scatter plot of goal 8 and goal 4 of the regions in the world
+goal_8_4_scatter_plot <- 
+ggplot(data = SDR_2023_Data, aes(x= goal_8_score, y = goal_4_score, color = regions_used_for_the_sdr, label = country)) +
+  geom_point()+
+  theme_minimal()+
+  scale_color_viridis_d(option = "mako") +
+  labs(x = "Decent Work/Economic Growth",
+       y = "Quality Education",
+       color = "Region")
+
+ggplotly(goal_8_4_scatter_plot)
+
+```
+
+For this visualization, I compared the quality of education and the economic/decent work SDG scores of the 8 applicable regions. I chose this as my last graph because, in my opinion, I think that comparing these two SDGs gives the strongest indicators of success in a country. Again, I found that there were certain regions that were outliers, like Sub-Saharan African countries scoring remarkably low on both quality of education as well as decent work and economic growth. Comparatively speaking, most of the other regions are concentrated in the top right portion of the graph, with some countries in each region scattered through the middle part of the graph. The Bahamas is one of the countries in its respective region found near the center of the scatter plot.  This is due to the fact that the Bahamas has a low quality of education score as well as a lower score as it economic/decent work when compared to other countries. Overall, the Bahamas has many areas it needs to grow in in multiple areas.  Chief among them are its education crisis and its respective low score in economic growth when factoring in decent work opportunities for its citizens. 
+
+
+
+
+
+
+```
