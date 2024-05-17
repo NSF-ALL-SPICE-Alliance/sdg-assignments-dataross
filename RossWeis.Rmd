@@ -88,10 +88,12 @@ leaflet(sdr_data_world_joined) %>%
 This is a map representing the SDG 4 score of the Bahamas as well as the surrounding countries in the same vicinity. The SDG 4 score represents the quality of education in a particular country as the learning opportunities available to its citizens.  The Bahamas has a very low SDG 4 score of 58.  Moreover, in this region, the Bahamas has the lowest SDG 4 score. Comparatively, the countries around the Bahamas have a much higher SDG 4 score.  These include countries like Cuba and Jamaica, which have SDG 4 scores of 92 and 81, respectively. Education serves as the cornerstone of a nation's progress and prosperity. Moreover, it plays a pivotal role in shaping a countries future. I chose this map as my first illustration because it shows concentrations of both high and low scores throughout the world. Furthermore, I think it does a great job of highlighting how the Bahamas compares to its neighbors and its region as whole.
 
 
-In this visualization, I created a bar to show the distribution of goal 4 scores across all 8 regions.
-
 
 ```{r}
+
+##In this visualization, I created a bar to show the distribution of goal 4 scores across all 8 regions.
+
+
 goal_4_histogram <- ggplot(SDR_2023_Data, aes(x = goal_4_score, fill=regions_used_for_the_sdr)) +
   geom_histogram() +
   theme_minimal() +
@@ -108,6 +110,8 @@ In this visualization, I created a bar to show the distribution of goal 4 scores
 
 
 ```{r}
+## Histogram of goal 8
+
 goal_8_histogram <- ggplot(SDR_2023_Data, aes(x = goal_8_score, fill=regions_used_for_the_sdr)) +
   geom_histogram() +
   theme_minimal() +
@@ -123,9 +127,10 @@ ggplotly(goal_8_histogram)
 This illustration shows how all regions compare as it relates to their SDG 8, or decent work and economic growth, and again the Bahamas lands near the center. The graph on decent work and economic growth in the Bahamas compared to its regional counterparts reveals a significant lag in several key indicators. Firstly, it indicates that the Bahamas has a lower employment rate compared to neighboring countries, implying potential challenges in job creation or labor market participation. Secondly, the graph likely depicts lower wages or income levels in the Bahamas relative to other nations in the region, indicating potential issues with income inequality or purchasing power parity. Additionally, it may illustrate a disparity in access to economic opportunities, such as entrepreneurship or career advancement, which could hinder the country's overall economic growth. Furthermore, the graph might highlight shortcomings in areas like labor productivity or innovation. The graph underscores the importance of these shortcomings by proving that the Bahamas, when compared to other regions and specifically its own, isnt doing very well. Decent work is a hallmark to a countries economic success.
 
 
-##Here is a scatter plot of goal 8 and goal 4 of the regions in the world
+
 
 ```{r}
+##Here is a scatter plot of goal 8 and goal 4 of the regions in the world
 goal_8_4_scatter_plot <- 
 ggplot(data = SDR_2023_Data, aes(x= goal_8_score, y = goal_4_score, color = regions_used_for_the_sdr, label = country)) +
   geom_point()+
